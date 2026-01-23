@@ -1,0 +1,11 @@
+Model Information:
+* title:	Iron Man (Infinity) (Textured) (Rigged)
+* source:	https://sketchfab.com/3d-models/iron-man-infinity-textured-rigged-7434cf03a4b34b4ca232a141fadad976
+* author:	CAPTAAINR (https://sketchfab.com/CAPTAAINR)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Iron Man (Infinity) (Textured) (Rigged)" (https://sketchfab.com/3d-models/iron-man-infinity-textured-rigged-7434cf03a4b34b4ca232a141fadad976) by CAPTAAINR (https://sketchfab.com/CAPTAAINR) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

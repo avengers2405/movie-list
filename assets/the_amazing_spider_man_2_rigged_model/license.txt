@@ -1,0 +1,11 @@
+Model Information:
+* title:	The Amazing Spider Man 2 Rigged Model
+* source:	https://sketchfab.com/3d-models/the-amazing-spider-man-2-rigged-model-fd9385343d14477a979d0269b3015e1e
+* author:	Shitlock_Homeless (https://sketchfab.com/Shitlock_Homeless)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "The Amazing Spider Man 2 Rigged Model" (https://sketchfab.com/3d-models/the-amazing-spider-man-2-rigged-model-fd9385343d14477a979d0269b3015e1e) by Shitlock_Homeless (https://sketchfab.com/Shitlock_Homeless) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

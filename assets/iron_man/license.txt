@@ -1,0 +1,11 @@
+Model Information:
+* title:	IRON MAN
+* source:	https://sketchfab.com/3d-models/iron-man-16848ba0aa564fa1aa68f6b64c82e81f
+* author:	shamus (https://sketchfab.com/consistent_models)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "IRON MAN" (https://sketchfab.com/3d-models/iron-man-16848ba0aa564fa1aa68f6b64c82e81f) by shamus (https://sketchfab.com/consistent_models) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
