@@ -11,6 +11,7 @@ export default function App() {
   const boxRef = useRef()
   // this is used to store reference to the physical box, we pass it to spiderman 
   // component so he knows exactly which object to shoot his web at
+  console.log("testing github")
 
   return (
     <div style={{ width: '100vw', height: '100vh', background: '#ffffff' }}>
