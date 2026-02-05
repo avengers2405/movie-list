@@ -14,7 +14,7 @@ const camera = new THREE.OrthographicCamera(
 );
 camera.position.z = 1;
 
-const frameRate = 0.005; // 5x speed
+const frameRate = 0.5; // 5x speed
 
 const BOX_HEIGHT = 0.35;
 const BOX_WIDTH = 0.9;
@@ -23,7 +23,8 @@ const movies = ["Avengers: Infinity War", "The Avengers", "Avengers: Endgame", "
 
 let scrollIndex = 0;
 let scrollVelocity = 0;
-let uTextStrength = 0.5; // 0 → no text, 1 → fully active
+let uTextStrength = 0.01; // 0 → no text, 1 → fully active
+const emptySpaceResistance = 0.1; // resistance every particle will face regardless of anything else
 
 window.addEventListener("wheel", (e) => {
     scrollVelocity += e.deltaY * 0.0005;
@@ -31,9 +32,44 @@ window.addEventListener("wheel", (e) => {
 
 const TEXT_POINT_COUNT = 120;
 const textPoints = new Float32Array(TEXT_POINT_COUNT * 2);
+
+// Create hollow rectangle centered at (0, 0.2) - shifted up by 0.2
+const rectWidth = 0.6;
+const rectHeight = 0.2;
+const halfWidth = rectWidth / 2;
+const halfHeight = rectHeight / 2;
+const yOffset = 0.0; // Shift up by 0.2
+const perimeter = 2 * (rectWidth + rectHeight);
+
 for (let i = 0; i < TEXT_POINT_COUNT; i++) {
-    textPoints[i * 2 + 0] = (i / TEXT_POINT_COUNT - 0.5) * 0.6;
-    textPoints[i * 2 + 1] = 0.0;
+    const t = (i / TEXT_POINT_COUNT) * perimeter; // Distance along perimeter
+    
+    if (t < rectWidth) {
+        // Bottom edge: left to right
+        textPoints[i * 2 + 0] = -halfWidth + t;
+        textPoints[i * 2 + 1] = -halfHeight + yOffset;
+    } else if (t < rectWidth + rectHeight) {
+        // Right edge: bottom to top
+        textPoints[i * 2 + 0] = halfWidth;
+        textPoints[i * 2 + 1] = -halfHeight + (t - rectWidth) + yOffset;
+    } else if (t < 2 * rectWidth + rectHeight) {
+        // Top edge: right to left
+        textPoints[i * 2 + 0] = halfWidth - (t - rectWidth - rectHeight);
+        textPoints[i * 2 + 1] = halfHeight + yOffset;
+    } else {
+        // Left edge: top to bottom
+        textPoints[i * 2 + 0] = -halfWidth;
+        textPoints[i * 2 + 1] = halfHeight - (t - 2 * rectWidth - rectHeight) + yOffset;
+    }
+}
+
+// Create horizontal line through middle of rectangle
+const textPoints2 = new Float32Array(TEXT_POINT_COUNT * 2);
+
+for (let i = 0; i < TEXT_POINT_COUNT; i++) {
+    const t = i / (TEXT_POINT_COUNT - 1); // 0 to 1
+    textPoints2[i * 2 + 0] = -halfWidth + t * rectWidth; // x: from -halfWidth to halfWidth
+    textPoints2[i * 2 + 1] = yOffset; // y: middle of rectangle
 }
 
 const renderer = new THREE.WebGLRenderer({
@@ -44,7 +80,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 // ---------- PARTICLE COUNT ----------
-const PARTICLE_COUNT = 100;
+const PARTICLE_COUNT = 200;
 
 // ---------- GEOMETRY ----------
 const geometry = new THREE.BufferGeometry();
@@ -112,12 +148,13 @@ function getNextPositionAndVelocity(positions, velocities, textPoints, uTextStre
             let ty = textPoints[j*2 + 1];
 
             const dist = glsl.distance(xi, yi, tx, ty);
-            if (dist) {
-                ax += (tx - xi) / dist * uTextStrength;
-                ay += (ty - yi) / dist * uTextStrength;
+            // console.log('dist: ', dist);
+            if (dist > 0.001) {
+                ax += (tx - xi) / dist * uTextStrength /dist;
+                ay += (ty - yi) / dist * uTextStrength /dist;
             } else {
-                ax += 10.0;
-                ay += 10.0;
+                ax += 0;
+                ay += 0;
             }
         }
 
@@ -125,8 +162,8 @@ function getNextPositionAndVelocity(positions, velocities, textPoints, uTextStre
         newPositions[i*3 + 1] = yi + vyi * dt + 0.5 * ay * dt * dt;
         newPositions[i*3 + 2] = 0;
 
-        newVelocities[i*3] = vxi + ax * dt;
-        newVelocities[i*3 + 1] = vyi + ay * dt;
+        newVelocities[i*3] = (vxi + ax * dt)*(1-emptySpaceResistance);
+        newVelocities[i*3 + 1] = (vyi + ay * dt)*(1-emptySpaceResistance);
         newVelocities[i*3 + 2] = 0;
     }
 
@@ -159,6 +196,30 @@ const borderMaterial = new THREE.LineBasicMaterial({
 
 const borderLines = new THREE.LineSegments(borderGeometry, borderMaterial);
 scene.add(borderLines);
+
+// ---------- TEXT POINTS VISUALIZATION ----------
+const textPointsGeometry = new THREE.BufferGeometry();
+const textPoints3D = new Float32Array(TEXT_POINT_COUNT * 3);
+
+function textPointsTo3D(textPoints, textPoints3D) {
+    for (let i = 0; i < TEXT_POINT_COUNT; i++) {
+        textPoints3D[i * 3 + 0] = textPoints[i * 2 + 0];
+        textPoints3D[i * 3 + 1] = textPoints[i * 2 + 1];
+        textPoints3D[i * 3 + 2] = 0;
+    }
+}
+textPointsTo3D(textPoints, textPoints3D);
+textPointsGeometry.setAttribute('position', new THREE.BufferAttribute(textPoints3D, 3));
+
+const textPointsMaterial = new THREE.PointsMaterial({
+    color: 0xffffff, // White color
+    size: 6,
+    transparent: true,
+    opacity: 0.2
+});
+
+const textPointsVis = new THREE.Points(textPointsGeometry, textPointsMaterial);
+scene.add(textPointsVis);
 
 geometry.setAttribute(
     "position",
@@ -201,6 +262,7 @@ function animate(time = 0) {
     // frame stats
     frames++;
     const now = performance.now();
+    const dt = (time * 0.001 * frameRate - material.uniforms.uTime.value);
     if (now >= lastTime + 1000) {
         fps = Math.round((frames * 1000) / (now - lastTime));
         frames = 0;
@@ -215,7 +277,6 @@ function animate(time = 0) {
     scrollIndex = (scrollIndex + movieCount) % movieCount;
 
     // update positions and velocities
-    const dt = (time * 0.001 - material.uniforms.uTime.value) * frameRate;
     const { newPositions, newVelocities } = getNextPositionAndVelocity(positions, velocities, textPoints, uTextStrength, dt);
     positions.set(newPositions);
     velocities.set(newVelocities);

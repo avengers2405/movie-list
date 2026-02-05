@@ -24,7 +24,7 @@ void main() {
     cos(uTime + seed * 6.28)
   ) * 0.04;
 
-  pos.xy += drift * (1.0 - lockFactor);
+  // pos.xy += drift * (1.0 - lockFactor);
 
   // --- SDF CONTAINMENT ---
   float sdf = sdBox(pos.xy, uBoxSize);
@@ -37,7 +37,7 @@ void main() {
 
   // Fade near edges (visual only)
   float edgeDist = abs(sdBox(pos.xy, uBoxSize));
-  vAlpha = smoothstep(0.0, 0.2, edgeDist);
+  vAlpha = 1.0;//smoothstep(0.0, 0.2, edgeDist);
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
   gl_PointSize = 8.0;
