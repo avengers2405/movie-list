@@ -5,7 +5,7 @@ import fragmentShaderSource from "./../shaders/particles.frag?raw";
 
 export class Particles {
     // ---------- PARTICLE COUNT ----------
-    PARTICLE_COUNT = 200;
+    PARTICLE_COUNT = 500;
 
     geometry = new THREE.BufferGeometry();
     
