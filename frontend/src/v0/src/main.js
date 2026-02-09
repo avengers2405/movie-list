@@ -12,7 +12,7 @@ const stage = new Init();
 const frameRate = 0.5; // 5x speed
 
 let uTextStrength = 0.0001; // 0 → no text, 1 → fully active
-const emptySpaceResistance = 0.2; // resistance every particle will face regardless of anything else
+const emptySpaceResistance = 0.4; // resistance every particle will face regardless of anything else
 
 const BOX_HEIGHT = 0.35;
 const BOX_WIDTH = 0.9;

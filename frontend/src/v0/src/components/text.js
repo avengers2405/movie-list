@@ -10,7 +10,7 @@ export class TextString {
         color: 0xffffff, // White color
         size: 1,
         transparent: true,
-        opacity: 0.4
+        opacity: 0.0
     });
     text;
     size;

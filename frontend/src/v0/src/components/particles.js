@@ -5,7 +5,7 @@ import fragmentShaderSource from "./../shaders/particles.frag?raw";
 
 export class Particles {
     // ---------- PARTICLE COUNT ----------
-    PARTICLE_COUNT = 500;
+    PARTICLE_COUNT = 2000;
 
     geometry = new THREE.BufferGeometry();
     
@@ -16,6 +16,7 @@ export class Particles {
     velocities = new Float32Array(this.PARTICLE_COUNT * 3);
     seeds = new Float32Array(this.PARTICLE_COUNT);
     lockFactor = new Float32Array(this.PARTICLE_COUNT); // 0 → free, 1 → locked to text
+    textStickyness = 0.8;
 
     constructor(scene, BOX_HEIGHT, BOX_WIDTH, textPoints, uTextStrength) {
         // Initialize particles randomly inside box
@@ -102,6 +103,7 @@ export class Particles {
             let ax = 0.0;
             let ay = 0.0;
 
+            let textStuck = false;
             for (let j = 0; j < TEXT_POINT_COUNT; j++) {
                 let tx = textPoints[j*3 + 0];
                 let ty = textPoints[j*3 + 1];
@@ -114,9 +116,17 @@ export class Particles {
                 } else {
                     ax += 0;
                     ay += 0;
+                    textStuck = true;
                 }
             }
 
+            if (textStuck) {
+                this.velocities[i*3 + 0] = 0;
+                this.velocities[i*3 + 1] = 0;
+                this.velocities[i*3 + 2] = 0;
+                continue;
+            }
+            
             this.positions[i*3] = xi + vxi * dt + 0.5 * ax * dt * dt;
             this.positions[i*3 + 1] = yi + vyi * dt + 0.5 * ay * dt * dt;
             this.positions[i*3 + 2] = 0;
