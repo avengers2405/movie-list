@@ -8,8 +8,8 @@ import simVelocityShader from "./../shaders/simVelocity.frag?raw";
 
 export class Particles {
     // ---------- PARTICLE COUNT ----------
-    PARTICLE_COUNT = 2000;
-    MAX_TEXT_POINTS = 10000; // Maximum number of text points supported
+    PARTICLE_COUNT = 10;
+    MAX_TEXT_POINTS = 100000; // Maximum number of text points supported
     TEXTURE_WIDTH; // GPU compute texture width
     TEXTURE_HEIGHT; // GPU compute texture height
 

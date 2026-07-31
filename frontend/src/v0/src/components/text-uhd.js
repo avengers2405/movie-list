@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export class TextString {
+export class TextUHD{
     movies;
     currentMovie;
     scrollIndex = 0;
@@ -14,14 +14,12 @@ export class TextString {
     });
     text;
     size;
-    spacing;
 
-    constructor(scene, size, spacing, movies, scrollIndex = 0) {
+    constructor(scene, size, movies, scrollIndex = 0) {
         this.movies = movies;
         this.currentMovie = this.movies[0].toUpperCase();
         this.scrollIndex = scrollIndex;
         this.size = size;
-        this.spacing = spacing;
 
         this.setTextPoints();
         this.geometry.setAttribute('position', new THREE.BufferAttribute(this.textPoints, 3));
@@ -36,6 +34,7 @@ export class TextString {
      * @param {number} spacing - Sampling density (higher = fewer points).
      */
     setTextPoints() {
+        console.log("Setting text points for movie: ", this.currentMovie);
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d', { willReadFrequently: true });
         
@@ -47,6 +46,8 @@ export class TextString {
         canvas.width = metrics.width;
         canvas.height = this.size * 1.5; // Padding for descenders
 
+        console.log("Canvas size: ", canvas.width, "x", canvas.height, "pixels: ", canvas.width * canvas.height, "flat array reqd for this: ", canvas.width * canvas.height * 3);
+        
         // 3. Draw text
         ctx.fillStyle = "white";
         ctx.textBaseline = "middle";
@@ -55,31 +56,13 @@ export class TextString {
 
         // 4. Scan pixels
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-        const points = [];
-
-        // Jump by 'spacing' to control particle density
-        for (let y = 0; y < canvas.height; y += this.spacing) {
-            for (let x = 0; x < canvas.width; x += this.spacing) {
-                // ImageData is [R, G, B, A, R, G, B, A...]
-                // We only care if Alpha (the 4th value) is > 128 (visible)
-                const alpha = imageData[(y * canvas.width + x) * 4 + 3];
-                
-                if (alpha > 128) {
-                    points.push({
-                        x: x - canvas.width / 2, // Center the points
-                        y: (canvas.height / 2 - y), // Flip Y for WebGL coords
-                        z: 0
-                    });
-                }
-            }
+        
+        this.textPoints = new Float32Array(imageData.length / 4 * 3); // 3 coordinates per pixel
+        for (let i = 0; i < imageData.length; i += 4) {
+            this.textPoints[(i / 4) * 3] = 255;//imageData[(i/4)*3]; //(i / 4) % canvas.width;
+            this.textPoints[(i / 4) * 3 + 1] = 255; //imageData[(i/4)*3+1]; //Math.floor((i / 4) / canvas.width);
+            this.textPoints[(i / 4) * 3 + 2] = 255;//imageData[(i/4)*3+2]; // imageData[i + 3] / 255; // Alpha channel
         }
-        console.log("Points: ", points);
-        this.textPoints = new Float32Array(points.flatMap(p => [p.x/800.0, p.y/800.0, p.z/800.0]));
-    }
-
-    updateTextSizeSpacing(size = this.size, spacing = this.spacing) {
-        this.size = size;
-        this.spacing = spacing;
     }
 
     updateTextFromScroll(scrollVelocity) {
@@ -100,7 +83,3 @@ export class TextString {
     
     }
 }
-
-// Usage Example:
-// const particleTargets = getTextPoints("NANO-SUIT", 120, 2);
-// console.log(`Generated ${particleTargets.length} target points.`);

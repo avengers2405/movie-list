@@ -3,6 +3,7 @@ import { Particles } from "./components/particles.js";
 import { BoundingBox } from "./components/bounding-box.js";
 import { RectText } from "./components/rect-text.js";
 import { TextString } from "./components/text.js";
+import { TextUHD } from "./components/text-uhd.js";
 import * as THREE from "three";
 
 console.log("JS file loaded");
@@ -46,6 +47,7 @@ let prevTime = 0;
 
 // ---------- ANIMATION LOOP ----------
 function animate(time = 0) {
+    // LOGS, doesnt affect animation
     // frame stats
     frames++;
     const now = performance.now();
@@ -61,6 +63,7 @@ function animate(time = 0) {
         lastTime = now;
         console.log(`FPS: ${fps}`);
     }
+    // LOGS END
 
     // scroll update
     text.updateTextFromScroll(stage.scrollVelocity);
@@ -76,7 +79,8 @@ function animate(time = 0) {
 
 (async function(){
     await document.fonts.load('bold 100px Orbitron');
-    text = new TextString(stage.scene, 100, 2, movies);
+    // text = new TextString(stage.scene, 100, 2, movies);
+    text = new TextUHD(stage.scene, 100, movies);
     particles = new Particles(stage.scene, stage.renderer, BOX_HEIGHT, BOX_WIDTH, text.textPoints, uTextStrength);
     animate();
 })();
