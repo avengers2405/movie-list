@@ -50,6 +50,12 @@ export class Init {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(this.renderer.domElement);
 
+        // Debug: Check WebGL capabilities
+        const gl = this.renderer.getContext();
+        console.log("WebGL Version:", gl instanceof WebGL2RenderingContext ? "WebGL 2" : "WebGL 1");
+        console.log("Max Vertex Texture Image Units:", gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS));
+        console.log("OES_texture_float:", gl.getExtension('OES_texture_float') ? 'supported' : 'not supported');
+
         // ---------- RESIZE ----------
         window.addEventListener("resize", () => {
             const aspect = window.innerWidth / window.innerHeight;
